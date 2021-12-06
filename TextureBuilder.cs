@@ -64,7 +64,7 @@ namespace MilkSpun.Common
             return texture2D;
         }
 
-        public static void SaveTexture2DArrayToAssetAsync(Texture2DArray array, string fileName)
+        public static void SaveTexture2DArrayToAsset(Texture2DArray array, string fileName)
         {
             var path = $"Assets/Milkspun/Terrain/Textures/{fileName}.asset";
             AssetDatabase.DeleteAsset(path);
@@ -72,7 +72,7 @@ namespace MilkSpun.Common
             AssetDatabase.ImportAsset(path, ImportAssetOptions.ForceUpdate);
         }
 
-        public static async Task SaveTextureToAsset(Texture2D texture2D, string fileName)
+        public static async Task SaveTextureToAssetAsync(Texture2D texture2D, string fileName)
         {
             var path = $"Assets/Milkspun/Terrain/Textures/{fileName}.png";
             var bytes = texture2D.EncodeToPNG();
