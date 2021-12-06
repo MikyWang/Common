@@ -1,0 +1,14 @@
+{
+    "name": "MilkSpun.Extentions",
+    "rootNamespace": "MilkSpun.Extentions",
+    "references": [],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}
