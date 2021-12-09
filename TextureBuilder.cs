@@ -66,7 +66,7 @@ namespace MilkSpun.Common
 
         public static void SaveTexture2DArrayToAsset(Texture2DArray array, string fileName)
         {
-            var path = $"Assets/Milkspun/Terrain/Textures/{fileName}.asset";
+            var path = $"Assets/Milkspun/ChunkTerrain/Textures/{fileName}.asset";
             AssetDatabase.DeleteAsset(path);
             AssetDatabase.CreateAsset(array, path);
             AssetDatabase.ImportAsset(path, ImportAssetOptions.ForceUpdate);
@@ -74,15 +74,14 @@ namespace MilkSpun.Common
 
         public static async Task SaveTextureToAssetAsync(Texture2D texture2D, string fileName)
         {
-            var path = $"Assets/Milkspun/Terrain/Textures/{fileName}.png";
+            var path = $"Assets/Milkspun/ChunkTerrain/Textures/{fileName}.png";
             var bytes = texture2D.EncodeToPNG();
             await using var fileStream = File.Open(path, FileMode.Create);
             await fileStream.WriteAsync(bytes);
 
             #if UNITY_EDITOR
             AssetDatabase.ImportAsset(path, ImportAssetOptions.ForceUpdate);
-            var textureIm = AssetImporter.GetAtPath(path) as TextureImporter;
-            if (textureIm is null) return;
+            if (AssetImporter.GetAtPath(path) is not TextureImporter textureIm) return;
             textureIm.isReadable = true;
             textureIm.anisoLevel = 9;
             textureIm.mipmapEnabled = false;

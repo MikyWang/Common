@@ -1,9 +1,7 @@
 {
-    "name": "MilkSpun.Common",
-    "rootNamespace": "MilkSpun.Common",
-    "references": [
-        "GUID:771fbd9e75b3f4daf8ed76262ef49765"
-    ],
+    "name": "MilkSpun.Common.Models",
+    "rootNamespace": "MilkSpun.Common.Models",
+    "references": [],
     "includePlatforms": [],
     "excludePlatforms": [],
     "allowUnsafeCode": false,
