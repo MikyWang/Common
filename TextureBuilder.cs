@@ -9,53 +9,16 @@ namespace MilkSpun.Common
 {
     public static class TextureBuilder
     {
-        public static Texture2D GenerateGradientTexture2D(in Texture2D outSideTexture2D, in Texture2D insideTexture2D, float threshold = 0.1f)
-        {
-            var outSidePixels = outSideTexture2D.GetPixels();
-            var insidePixels = insideTexture2D.GetPixels();
-            var length = Mathf.Min(outSidePixels.Length, insidePixels.Length);
-            var sqrtLength = (int)Mathf.Sqrt(length);
-            var outPixels = new Color[length];
-            var minValue = threshold * sqrtLength;
-            var maxValue = (1 - threshold) * sqrtLength;
-
-            for (int x = 0, i = 0; x < sqrtLength; x++)
-            {
-                for (var z = 0; z < sqrtLength; z++, i++)
-                {
-                    var xPer = x < minValue
-                        ? x / minValue
-                        // : x > maxValue
-                        //     ? (sqrtLength - x) / (sqrtLength - maxValue)
-                        : 1;
-                    var zPer = z < minValue
-                        ? z / minValue
-                        // : z > maxValue
-                        //     ? (sqrtLength - z) / (sqrtLength - maxValue)
-                        : 1;
-
-                    outPixels[i] = Color.Lerp(outSidePixels[i], insidePixels[i], Mathf.Min(xPer, 1));
-                }
-            }
-
-            var texture2D = new Texture2D(sqrtLength, sqrtLength)
-            {
-                wrapMode = TextureWrapMode.Repeat,
-                filterMode = FilterMode.Bilinear
-            };
-
-            texture2D.SetPixels(outPixels);
-            texture2D.Apply();
-
-            return texture2D;
-        }
-
-        public static Texture2D BuildTexture(Color[] pixels, int length, TextureWrapMode textureWrapMode = TextureWrapMode.Repeat, FilterMode filterMode = FilterMode.Bilinear)
+        public static Texture2D BuildTexture(
+            Color[] pixels,
+            int length,
+            TextureWrapMode textureWrapMode = TextureWrapMode.Clamp,
+            FilterMode filterMode = FilterMode.Bilinear)
         {
             var texture2D = new Texture2D(length, length)
             {
-                wrapMode = TextureWrapMode.Clamp,
-                filterMode = FilterMode.Bilinear
+                wrapMode = textureWrapMode,
+                filterMode = filterMode
             };
 
             texture2D.SetPixels(pixels);
@@ -90,51 +53,56 @@ namespace MilkSpun.Common
             #endif
         }
 
-        // public static Texture2D BuildNoiseTexture(float[,] noiseMap, TerrainType[] terrainTypes)
-        // {
-        //     var pixels = new Color[noiseMap.Length];
-        //     int pixelLength = noiseMap.GetLength(0);
-        //
-        //     for (int x = 0, pi = 0; x < pixelLength; x++)
-        //     {
-        //         for (int z = 0; z < pixelLength; z++, pi++)
-        //         {
-        //             // pixels[pi] = Color.Lerp(Color.black, Color.white, noiseMap[x, z]);
-        //             for (int i = 0; i < terrainTypes.Length; i++)
-        //             {
-        //                 if (noiseMap[x, z] < terrainTypes[i].threshold)
-        //                 {
-        //                     if (i == terrainTypes.Length - 1)
-        //                     {
-        //                         pixels[pi] = terrainTypes[i].baseTexture.GetPixel(x, z);
-        //                         break;
-        //                     }
-        //                     var t = terrainTypes[i].threshold - noiseMap[x, z];
-        //                     pixels[pi] = Color.Lerp(terrainTypes[i].baseTexture.GetPixel(x, z)
-        //                         , terrainTypes[i + 1].baseTexture.GetPixel(x, z)
-        //                         , noiseMap[x, z]);
-        //                     break;
-        //                 }
-        //             }
-        //             foreach (var type in terrainTypes)
-        //             {
-        //                 if (noiseMap[x, z] < type.threshold)
-        //                 {
-        //                     pixels[pi] = type.baseTexture.GetPixel(x, z);
-        //                     break;
-        //                 }
-        //             }
-        //
-        //         }
-        //     }
-        //
-        //     Texture2D texture2D = new Texture2D(pixelLength, pixelLength);
-        //     texture2D.wrapMode = TextureWrapMode.Clamp;
-        //     texture2D.filterMode = FilterMode.Bilinear;
-        //     texture2D.SetPixels(pixels);
-        //     texture2D.Apply();
-        //
-        //     return texture2D;
-        // }
+        /// <summary>
+        /// 从Texture2D中获取指定块的纹理
+        /// </summary>
+        /// <param name="sourceTexture">源纹理图</param>
+        /// <param name="size">纹理分成的块数,如4x4 则size为16</param>
+        /// <param name="index">从左往右，从上往下，从0计数的索引值</param>
+        /// <returns>局部纹理图</returns>
+        public static Texture2D GetPartTextureFromTexture2D(
+            Texture2D sourceTexture,
+            int size,
+            int index)
+        {
+            var sourceWidth = (int)Mathf.Sqrt(sourceTexture.GetPixels().Length);
+            var sizeX = (int)Mathf.Sqrt(size);
+            var width = sourceWidth / sizeX;
+            var pixels = new Color[width * width];
+
+            for (int i = 0, z = sourceWidth - ((index + sizeX) / sizeX * width);
+                 z < sourceWidth - index / sizeX * width;
+                 z++)
+            {
+                for (var x = (index % sizeX) * width;
+                     x < ((index + 1) % sizeX) * width;
+                     x++, i++)
+                {
+                    pixels[i] = sourceTexture.GetPixel(x, z);
+                }
+            }
+            return BuildTexture(pixels, width);
+        }
+
+        /// <summary>
+        /// 从Texture2DArray中获取指定页纹理的局部纹理
+        /// </summary>
+        /// <param name="array">纹理数组</param>
+        /// <param name="page">纹理块所在页数</param>
+        /// <param name="size">纹理分成的块数,如4x4 则size为16</param>
+        /// <param name="index">从左往右，从上往下，从0计数的索引值</param>
+        /// <returns>局部纹理图</returns>
+        public static Texture2D GetPartTextureFromTexture2DArray(
+            Texture2DArray array,
+            int page,
+            int size,
+            int index)
+        {
+            var pixels = array.GetPixels(page);
+            var length = (int)Mathf.Sqrt(pixels.Length);
+            var currentTexture = BuildTexture(pixels, length);
+
+            return GetPartTextureFromTexture2D(currentTexture, size, index);
+        }
     }
 }
