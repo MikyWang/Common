@@ -9,13 +9,21 @@ namespace MilkSpun.Common
 {
     public static class TextureBuilder
     {
+
+        /// <summary>
+        /// 根据颜色数组创建一个纹理对象
+        /// </summary>
+        /// <param name="pixels">颜色像素数组</param>
+        /// <param name="textureWrapMode">纹理包裹模式</param>
+        /// <param name="filterMode">过滤模式</param>
+        /// <returns>生成的纹理对象</returns>
         public static Texture2D BuildTexture(
             Color[] pixels,
-            int length,
             TextureWrapMode textureWrapMode = TextureWrapMode.Clamp,
             FilterMode filterMode = FilterMode.Bilinear)
         {
-            var texture2D = new Texture2D(length, length)
+            var width = (int)Mathf.Sqrt(pixels.Length);
+            var texture2D = new Texture2D(width, width)
             {
                 wrapMode = textureWrapMode,
                 filterMode = filterMode
@@ -27,29 +35,47 @@ namespace MilkSpun.Common
             return texture2D;
         }
 
-        public static void SaveTexture2DArrayToAsset(Texture2DArray array, string fileName)
+        /// <summary>
+        /// 保存texture2DArray到asset文件中
+        /// </summary>
+        /// <param name="array">texture2DArray</param>
+        /// <param name="fileName">要保存的文件名（不含后缀）</param>
+        /// <param name="path">保存的文件路径</param>
+        public static void SaveTexture2DArrayToAsset(
+            Texture2DArray array,
+            string fileName,
+            string path = "Assets/Milkspun/ChunkTerrain/Textures")
         {
-            var path = $"Assets/Milkspun/ChunkTerrain/Textures/{fileName}.asset";
-            AssetDatabase.DeleteAsset(path);
-            AssetDatabase.CreateAsset(array, path);
-            AssetDatabase.ImportAsset(path, ImportAssetOptions.ForceUpdate);
+            var file = $"{path}/{fileName}.asset";
+            AssetDatabase.DeleteAsset(file);
+            AssetDatabase.CreateAsset(array, file);
+            AssetDatabase.ImportAsset(file, ImportAssetOptions.ForceUpdate);
         }
 
-        public static async Task SaveTextureToAssetAsync(Texture2D texture2D, string fileName)
+        /// <summary>
+        /// 保存纹理对象到png图片
+        /// </summary>
+        /// <param name="texture2D">要保存的纹理对象</param>
+        /// <param name="fileName">文件名（不含后缀）</param>
+        /// <param name="path">文件路径</param>
+        public static async Task SaveTextureToAssetAsync(
+            Texture2D texture2D,
+            string fileName,
+            string path = "Assets/Milkspun/ChunkTerrain/Textures")
         {
-            var path = $"Assets/Milkspun/ChunkTerrain/Textures/{fileName}.png";
+            var file = $"{path}/{fileName}.png";
             var bytes = texture2D.EncodeToPNG();
-            await using var fileStream = File.Open(path, FileMode.Create);
+            await using var fileStream = File.Open(file, FileMode.Create);
             await fileStream.WriteAsync(bytes);
 
             #if UNITY_EDITOR
-            AssetDatabase.ImportAsset(path, ImportAssetOptions.ForceUpdate);
-            if (AssetImporter.GetAtPath(path) is not TextureImporter textureIm) return;
+            AssetDatabase.ImportAsset(file, ImportAssetOptions.ForceUpdate);
+            if (AssetImporter.GetAtPath(file) is not TextureImporter textureIm) return;
             textureIm.isReadable = true;
             textureIm.anisoLevel = 9;
             textureIm.mipmapEnabled = false;
             textureIm.wrapMode = TextureWrapMode.Clamp;
-            AssetDatabase.ImportAsset(path, ImportAssetOptions.ForceUpdate);
+            AssetDatabase.ImportAsset(file, ImportAssetOptions.ForceUpdate);
             #endif
         }
 
@@ -81,7 +107,7 @@ namespace MilkSpun.Common
                     pixels[i] = sourceTexture.GetPixel(x, z);
                 }
             }
-            return BuildTexture(pixels, width);
+            return BuildTexture(pixels);
         }
 
         /// <summary>
@@ -99,8 +125,7 @@ namespace MilkSpun.Common
             int index)
         {
             var pixels = array.GetPixels(page);
-            var length = (int)Mathf.Sqrt(pixels.Length);
-            var currentTexture = BuildTexture(pixels, length);
+            var currentTexture = BuildTexture(pixels);
 
             return GetPartTextureFromTexture2D(currentTexture, size, index);
         }
