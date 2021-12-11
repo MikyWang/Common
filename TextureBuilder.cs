@@ -101,7 +101,7 @@ namespace MilkSpun.Common
                  z++)
             {
                 for (var x = (index % sizeX) * width;
-                     x < ((index + 1) % sizeX) * width;
+                     x < (index % sizeX + 1) * width;
                      x++, i++)
                 {
                     pixels[i] = sourceTexture.GetPixel(x, z);
