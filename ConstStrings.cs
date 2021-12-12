@@ -6,6 +6,7 @@ namespace MilkSpun.Common
 {
     public static class ConstStrings
     {
+        public static readonly string MenuNamePrefix = "MilkSpun";
         public static readonly int TerrainTexture = Shader.PropertyToID("_VerticesHeightTexture2D");
         public static readonly int LeftOffset = Shader.PropertyToID("_LeftOffset");
         public static readonly int RightOffset = Shader.PropertyToID("_RightOffset");
