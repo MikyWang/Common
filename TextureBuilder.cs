@@ -2,7 +2,9 @@ using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
+#if UNITY_EDITOR
 using UnityEditor;
+#endif
 using UnityEngine;
 
 namespace MilkSpun.Common
@@ -47,9 +49,12 @@ namespace MilkSpun.Common
             string path = "Assets/Milkspun/ChunkTerrain/Textures")
         {
             var file = $"{path}/{fileName}.asset";
+            
+            #if UNITY_EDITOR
             AssetDatabase.DeleteAsset(file);
             AssetDatabase.CreateAsset(array, file);
             AssetDatabase.ImportAsset(file, ImportAssetOptions.ForceUpdate);
+            #endif
         }
 
         /// <summary>
