@@ -9,8 +9,11 @@ namespace MilkSpun.Common
         /// <summary>
         /// 检查坐标点是否在地上
         /// </summary>
-        /// <param name="position">被检测的坐标点</param>
+        /// <param name="x">x坐标</param>
+        /// <param name="y">y坐标</param>
+        /// <param name="z">z坐标</param>
         /// <returns></returns>
-        public bool CheckPositionInWorld(Vector3 position);
+        public bool CheckPositionInWorld(float x,float y,float z);
     }
+    
 }
