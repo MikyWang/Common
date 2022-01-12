@@ -46,7 +46,7 @@ namespace MilkSpun.Common
         public static void SaveTexture2DArrayToAsset(
             Texture2DArray array,
             string fileName,
-            string path = "Assets/Milkspun/ChunkTerrain/Textures")
+            string path = "Assets/Milkspun/Textures")
         {
             var file = $"{path}/{fileName}.asset";
             

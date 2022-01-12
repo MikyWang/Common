@@ -8,6 +8,7 @@ namespace MilkSpun.Common.Models
     [CreateAssetMenu(fileName = "_Textures",menuName = "MilkSpun/创建纹理组")]
     public class TextureConfig:ScriptableObject,IEnumerable<Texture2D>
     {
+        public string arrayName;
         [InlineEditor]
         public List<Texture2D> textures;
         public IEnumerator<Texture2D> GetEnumerator()

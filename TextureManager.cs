@@ -20,7 +20,7 @@ namespace MilkSpun.ChunkWorld.Main
             var num = 0;
             while (textures.Length > 0)
             {
-                GenerateArrayImpl(textures, $"Tex2dArray{num}");
+                GenerateArrayImpl(textures, textureConfig.arrayName);
                 num++;
                 textures = textureConfig.Skip(num * 9).Take(9).ToArray();
             }
@@ -28,7 +28,8 @@ namespace MilkSpun.ChunkWorld.Main
 
         private void GenerateArrayImpl(IReadOnlyList<Texture2D> textures, string fileName)
         {
-            var array = new Texture2DArray(textures[0].width, textures[0].height, textures.Count, textures[0].format, true)
+            var array = new Texture2DArray(textures[0].width, textures[0].height, textures.Count, textures[0].format,
+             true)
             {
                 wrapMode = TextureWrapMode.Clamp
             };
