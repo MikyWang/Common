@@ -29,9 +29,10 @@ namespace MilkSpun.ChunkWorld.Main
         private void GenerateArrayImpl(IReadOnlyList<Texture2D> textures, string fileName)
         {
             var array = new Texture2DArray(textures[0].width, textures[0].height, textures.Count, textures[0].format,
-             true)
+             false)
             {
-                wrapMode = TextureWrapMode.Clamp
+                wrapMode = TextureWrapMode.Clamp,
+                filterMode = FilterMode.Point
             };
 
             for (var i = 0; i < textures.Count; i++)

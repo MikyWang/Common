@@ -7,7 +7,7 @@ namespace MilkSpun.Common
 {
     public class Singleton<T> : MonoBehaviour where T : Singleton<T>
     {
-        public static T Instance { get; private set; }
+        public static T Instance { get; protected set; }
         public static bool IsInitialized => Instance is not null;
 
         protected virtual void Awake()
