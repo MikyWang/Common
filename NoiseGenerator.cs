@@ -49,7 +49,7 @@ namespace MilkSpun.Common
             var normalize = 0f;
             foreach (var wave in waves)
             {
-                noiseVal += wave.amplitude * (noise.snoise(new float2( wave.frequency * sampleX + wave.seed, sampleY * wave.frequency + wave.seed)));
+                noiseVal += wave.amplitude * Mathf.PerlinNoise(wave.frequency * sampleX + wave.seed, sampleY * wave.frequency + wave.seed);
                 normalize += wave.amplitude;
             }
             noiseVal /= normalize;
